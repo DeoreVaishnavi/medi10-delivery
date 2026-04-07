@@ -1,4 +1,6 @@
 <?php
+
+// abc
 session_start();
 include("config/db.php");
 

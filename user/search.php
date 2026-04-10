@@ -26,6 +26,16 @@ if (mysqli_num_rows($result) > 0) {
 
     while ($row = mysqli_fetch_assoc($result)) {
         $medicine_id = $row['id'];
+
+        $images = [];
+        $imgQuery = "SELECT * FROM medicine_images WHERE medicine_id = '$medicine_id'";
+        $imgResult = mysqli_query($conn, $imgQuery);
+
+        if ($imgResult && mysqli_num_rows($imgResult) > 0) {
+            while ($img = mysqli_fetch_assoc($imgResult)) {
+                $images[] = "../uploads/medicines/" . $img['image_name'];
+            }
+        }
         ?>
         
         <div style="border:1px solid #ccc; padding:15px; margin:15px 0; border-radius:8px;">
@@ -48,18 +58,19 @@ if (mysqli_num_rows($result) > 0) {
             <!-- MULTIPLE IMAGES -->
             <div style="margin-bottom:10px;">
                 <?php
-                $imgQuery = "SELECT * FROM medicine_images WHERE medicine_id = '$medicine_id'";
-                $imgResult = mysqli_query($conn, $imgQuery);
-
-                if ($imgResult && mysqli_num_rows($imgResult) > 0) {
-                    while ($img = mysqli_fetch_assoc($imgResult)) {
+                if (!empty($images)) {
+                    foreach ($images as $singleImage) {
+                        $jsImageList = htmlspecialchars(json_encode($images), ENT_QUOTES, 'UTF-8');
+                        $jsImageSrc = htmlspecialchars($singleImage, ENT_QUOTES, 'UTF-8');
+                        $jsMedicineName = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
                         ?>
                         <img 
-                            src="../uploads/medicines/<?php echo $img['image_name']; ?>" 
+                            src="<?php echo $singleImage; ?>"
                             alt="Medicine Image"
                             width="100"
                             height="100"
-                            style="margin:5px; border:1px solid #ddd; padding:3px; object-fit:cover;"
+                            style="margin:5px; border:1px solid #ddd; padding:3px; object-fit:cover; cursor:pointer;"
+                            onclick='openImage("<?php echo $jsImageSrc; ?>", "<?php echo $jsMedicineName; ?>", <?php echo $jsImageList; ?>)'
                         >
                         <?php
                     }
@@ -72,7 +83,7 @@ if (mysqli_num_rows($result) > 0) {
             <!-- ADD TO CART -->
             <form method="POST" action="cart.php">
                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                <input type="hidden" name="name" value="<?php echo $row['name']; ?>">
+                <input type="hidden" name="name" value="<?php echo htmlspecialchars($row['name']); ?>">
                 <input type="hidden" name="price" value="<?php echo $row['price']; ?>">
 
                 <input 

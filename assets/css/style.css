@@ -1,0 +1,128 @@
+:root {
+    --primary-color: #00b09b;
+    --secondary-color: #96c93d;
+    --dark-bg: #121212;
+    --light-bg: #f8f9fa;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.18);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f7f6;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+/* Navbar */
+.navbar-custom {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.navbar-custom .navbar-brand, .navbar-custom .nav-link {
+    color: white !important;
+    font-weight: 500;
+}
+.navbar-custom .nav-link:hover {
+    color: #f1f1f1 !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero-section {
+    background: url('https://images.unsplash.com/photo-1576091160550-2173ff9e5ee5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    position: relative;
+    padding: 100px 0;
+    color: white;
+}
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Product Cards */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+.product-image-container {
+    height: 200px;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #adb5bd;
+}
+
+/* Custom Buttons */
+.btn-primary-custom {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 30px;
+    padding: 10px 25px;
+    transition: all 0.3s;
+}
+.btn-primary-custom:hover {
+    box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
+    transform: scale(1.05);
+    color: white;
+}
+
+/* Admin Sidebar */
+.admin-sidebar {
+    min-height: calc(100vh - 56px);
+    background: #212529;
+    color: white;
+}
+.admin-sidebar .nav-link {
+    color: rgba(255,255,255,0.8);
+    padding: 15px 20px;
+    border-bottom: 1px solid #343a40;
+}
+.admin-sidebar .nav-link.active, .admin-sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-left: 4px solid var(--primary-color);
+}
+.admin-content {
+    padding: 30px;
+    background: #f8f9fa;
+    flex-grow: 1;
+}
+
+/* Stats Cards */
+.stat-card {
+    border-radius: 15px;
+    border: none;
+    color: white;
+}
+.stat-card-1 { background: linear-gradient(45deg, #FF512F, #DD2476); }
+.stat-card-2 { background: linear-gradient(45deg, #1A2980, #26D0CE); }
+.stat-card-3 { background: linear-gradient(45deg, #11998e, #38ef7d); }
+.stat-card-4 { background: linear-gradient(45deg, #ff9966, #ff5e62); }

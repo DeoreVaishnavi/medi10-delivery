@@ -1,83 +1,84 @@
 <?php
 session_start();
-include("../config/db.php");
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
     header("Location: ../login.php");
     exit();
 }
 
+include("../config/db.php");
+include("../includes/header.php");
+include("../includes/admin_navbar.php");
+
 $message = "";
 
 if (isset($_POST['add'])) {
-    $name = trim($_POST['name']);
-    $desc = trim($_POST['description']);
-    $price = trim($_POST['price']);
-    $stock = trim($_POST['stock']);
+    $name = $_POST['name'];
+    $desc = $_POST['description'];
+    $price = $_POST['price'];
+    $stock = $_POST['stock'];
 
-    if (empty($name) || empty($price) || empty($stock)) {
-        $message = "❌ Name, price and stock are required!";
+    $query = "INSERT INTO medicines (name, description, price, stock)
+              VALUES ('$name', '$desc', '$price', '$stock')";
+
+    if (mysqli_query($conn, $query)) {
+        $message = "Medicine Added Successfully!";
     } else {
-        $query = "INSERT INTO medicines (name, description, price, stock)
-                  VALUES ('$name', '$desc', '$price', '$stock')";
-
-        if (mysqli_query($conn, $query)) {
-            $medicine_id = mysqli_insert_id($conn);
-
-            if (!empty($_FILES['images']['name'][0])) {
-                $totalFiles = count($_FILES['images']['name']);
-
-                for ($i = 0; $i < $totalFiles; $i++) {
-                    $imageName = $_FILES['images']['name'][$i];
-                    $tmpName = $_FILES['images']['tmp_name'][$i];
-
-                    if ($imageName != "") {
-                        $newImageName = time() . "_" . $i . "_" . $imageName;
-                        $folder = "../uploads/medicines/" . $newImageName;
-
-                        if (move_uploaded_file($tmpName, $folder)) {
-                            mysqli_query($conn, "INSERT INTO medicine_images (medicine_id, image_name)
-                                                 VALUES ('$medicine_id', '$newImageName')");
-                        }
-                    }
-                }
-            }
-
-            $message = "✅ Medicine with images added successfully!";
-        } else {
-            $message = "❌ Error: " . mysqli_error($conn);
-        }
+        $message = "Error: " . mysqli_error($conn);
     }
 }
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Add Medicine</title>
-</head>
-<body>
+<div class="d-flex flex-grow-1" style="min-height: calc(100vh - 56px);">
+    <!-- Sidebar -->
+    <?php include("../includes/admin_sidebar.php"); ?>
 
-<h2>Add Medicine</h2>
+    <!-- Main Content -->
+    <div class="admin-content w-100 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="font-weight-bold text-dark mb-0"><i class="fa-solid fa-plus-circle text-primary me-2"></i>Add Medicine</h2>
+            <a href="manage_medicines.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-2"></i>Back to Inventory</a>
+        </div>
 
-<?php if ($message != "") { ?>
-    <p><?php echo $message; ?></p>
-<?php } ?>
+        <div class="card border-0 shadow-sm glass-panel col-lg-8">
+            <div class="card-body p-4">
+                <?php if ($message) { ?>
+                    <div class="alert alert-<?php echo strpos($message, 'Error') !== false ? 'danger' : 'success'; ?> alert-dismissible fade show" role="alert">
+                        <?php echo $message; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php } ?>
 
-<form method="POST" enctype="multipart/form-data">
-    <input type="text" name="name" placeholder="Medicine Name" required><br><br>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-bold">Medicine Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="E.g., Paracetamol" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-bold">Description</label>
+                        <textarea name="description" class="form-control" rows="4" placeholder="Brief description of the medicine..."></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-dark fw-bold">Price (₹)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted">₹</span>
+                                <input type="number" name="price" step="0.01" class="form-control" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-dark fw-bold">Stock Quantity</label>
+                            <input type="number" name="stock" class="form-control" placeholder="100" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" name="add" class="btn btn-primary-custom w-100 mt-3">
+                        <i class="fa-solid fa-save me-2"></i>Save Medicine
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <textarea name="description" placeholder="Description"></textarea><br><br>
-
-    <input type="number" step="0.01" name="price" placeholder="Price" required><br><br>
-
-    <input type="number" name="stock" placeholder="Stock Quantity" required><br><br>
-
-    <label>Upload 2 to 3 Images:</label><br>
-    <input type="file" name="images[]" multiple><br><br>
-
-    <button type="submit" name="add">Add Medicine</button>
-</form>
-
-</body>
-</html>
+<?php include("../includes/footer.php"); ?>
